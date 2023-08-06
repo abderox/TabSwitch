@@ -9,6 +9,17 @@ function captureTabScreenshot(tabId) {
     });
 }
 
+function removeDuplicatesById(arr) {
+    const uniqueIds = new Set();
+    return arr.filter((item) => {
+      if (!uniqueIds.has(item.id)) {
+        uniqueIds.add(item.id);
+        return true;
+      }
+      return false;
+    });
+  }
+
 async function updateTabData(tabId) {
     const screenshot = await captureTabScreenshot(tabId);
     const tab = tabData.find((item) => item.id === tabId);
@@ -16,9 +27,14 @@ async function updateTabData(tabId) {
         tab.screenshot = screenshot.dataUrl;
     } else {
         chrome.tabs.query({ currentWindow: true }, function (tabs) {
+            if(!tabs.find(tab => tab.id === tabId)){
+                return;
+            }
             tabData.push({ id: tabId, url: tabs.find(tab => tab.id === tabId)?.url, screenshot });
         });
     }
+
+    tabData = removeDuplicatesById(tabData);
 }
 
 function removeTabData(tabId) {
