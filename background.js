@@ -49,10 +49,10 @@ chrome.tabs.onCreated.addListener(async (tab) => {
     await updateTabData(tab.id);
 });
 
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
    
     if (changeInfo.status === "complete" && tab.active) {
-        updateTabData(tabId);
+        await updateTabData(tabId);
     }
 });
 
